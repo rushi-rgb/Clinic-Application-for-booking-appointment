@@ -8,7 +8,13 @@
 </p>
 
 ## About This Project
-add doctor prescription. 
+Created Docker image,fetch from docker repo, run a docker container through it by wrting the docker file shared, also align some necessary dependancies,
+and now the application is in running state 
+
+after running docker container. 
+you can see this we application and acess it by running docker container.
+
+Thats it cool project must try to learn more docker concepts.
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
