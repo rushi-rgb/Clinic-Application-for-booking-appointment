@@ -1,0 +1,14 @@
+on: '3.8'
+
+services:
+    app:
+          build:
+                  context: .
+                          dockerfile: Dockerfile
+                                container_name: clinic_app
+                                      volumes:
+                                              - .:/var/www/html
+                                                    ports:
+                                                            - "8080:80"
+                                                                  working_dir: /var/www/html
+
