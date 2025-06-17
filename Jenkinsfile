@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/rushi-rgb/Clinic-Application-for-booking-appointment.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t rushi-rgb/clinic-app .'
