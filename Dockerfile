@@ -1,41 +1,33 @@
-#e an official PHP-Apache base image
-FROM php:8.2-apache
+pipeline {
+    agent any
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    stages {
+        stage('Verify Docker') {
+            steps {
+                sh 'docker version'
+            }
+        }
 
-# Enable Apache mod_rewrite (required for Laravel pretty URLs)
-RUN a2enmod rewrite
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/rushi-rgb/Clinic-Application-for-booking-appointment.git'
+            }
+        }
 
-# Set working directory
-WORKDIR /var/www
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t rushi-rgb/clinic-app .'
+            }
+        }
 
-# Set Git safe directory
-RUN git config --global --add safe.directory /var/www
-
-# Copy Laravel app files
-COPY . .
-
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Install PHP dependencies (without running scripts/autoloaders)
-RUN composer install --no-scripts --no-autoloader
-
-# Set permissions for Laravel directories
-RUN mkdir -p storage bootstrap/cache \
-    && chown -R www-data:www-data /var/www \
-    && chmod -R 755 storage bootstrap/cache
-
-# Point Apache DocumentRoot to Laravel's public folder
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/public|g' /etc/apache2/sites-available/000-default.conf
-
+        stage('Run Docker Container') {
+            steps {
+                sh '''
+                docker stop clinic-app || true
+                docker rm clinic-app || true
+                docker run -d --name clinic-app -p 8000:80 rushi-rgb/clinic-app
+                '''
+            }
+        }
+    }
+}
