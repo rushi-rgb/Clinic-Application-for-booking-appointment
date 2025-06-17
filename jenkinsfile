@@ -1,37 +1,25 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'yourusername/clinic-app'
-        CONTAINER_NAME = 'clinic-container'
-    }
-
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/yourusername/your-laravel-repo.git'
+                git 'https://github.com/rushi-rgb/Clinic-Application-for-booking-appointment.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                sh 'docker build -t rushi-rgb/clinic-app .'
             }
         }
 
-        stage('Stop Previous Container') {
+        stage('Run Docker Container') {
             steps {
                 sh '''
-                docker stop $CONTAINER_NAME || true
-                docker rm $CONTAINER_NAME || true
-                '''
-            }
-        }
-
-        stage('Run New Container') {
-            steps {
-                sh '''
-                docker run -d --name $CONTAINER_NAME -p 8000:80 $IMAGE_NAME
+                docker stop clinic-app || true
+                docker rm clinic-app || true
+                docker run -d --name clinic-app -p 8000:80 rushi-rgb/clinic-app
                 '''
             }
         }
