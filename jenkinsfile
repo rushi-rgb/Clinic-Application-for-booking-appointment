@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'yourusername/clinic-app'
+        CONTAINER_NAME = 'clinic-container'
+    }
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/yourusername/your-laravel-repo.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Stop Previous Container') {
+            steps {
+                sh '''
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                '''
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh '''
+                docker run -d --name $CONTAINER_NAME -p 8000:80 $IMAGE_NAME
+                '''
+            }
+        }
+    }
+}
